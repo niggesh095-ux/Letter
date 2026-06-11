@@ -42,7 +42,8 @@
             position: absolute;
             user-select: none;
             cursor: pointer;
-            animation: floatSkew 5s ease-in-out infinite alternate;
+            z-index: 1; /* Locked strictly behind the interface layers */
+            animation: floatSkew var(--fdur, 5s) ease-in-out infinite alternate;
             transition: transform 0.2s ease;
         }
         .floating-item:hover {
@@ -50,13 +51,14 @@
         }
         @keyframes floatSkew {
             0% { transform: translateY(0px) translateX(0px) rotate(0deg); }
-            100% { transform: translateY(-15px) translateX(8px) rotate(8deg); }
+            100% { transform: translateY(var(--my, -15px)) translateX(var(--mx, 8px)) rotate(var(--mr, 10deg)); }
         }
 
         /* Pulsing Heart Button */
         .heart-btn {
             transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             animation: heartBeat 2s infinite;
+            z-index: 10;
         }
         .heart-btn:hover {
             transform: scale(1.2) rotate(5deg);
@@ -83,6 +85,7 @@
             transform: scale(0);
             opacity: 0;
             transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 20;
         }
         .envelope-wrapper.reveal {
             transform: scale(1);
@@ -303,12 +306,7 @@
 
     <div id="sparkleLayer" class="absolute inset-0 overflow-hidden pointer-events-none"></div>
 
-    <div id="floatingDecorLayer" class="absolute inset-0 overflow-hidden pointer-events-none text-2xl">
-        <div class="floating-item top-32 left-4" style="animation-delay: 0s;">🐱🎀</div>
-        <div class="floating-item top-32 right-4" style="animation-delay: 0.3s;">🌷</div>
-        <div class="floating-item bottom-4 left-4" style="animation-delay: 0.7s;">🌷</div>
-        <div class="floating-item bottom-4 right-4" style="animation-delay: 2s;">🐱🎀</div>
-    </div>
+    <div id="floatingDecorLayer" class="absolute inset-0 overflow-hidden pointer-events-none"></div>
 
     <div id="page1" class="flex flex-col items-center justify-center z-10 w-full max-w-[360px] relative mx-auto">
         
@@ -331,12 +329,12 @@
             </div>
             
             <h2 class="fancy-title text-3xl font-semibold text-purple-300 text-center mb-4 tracking-wide drop-shadow-[0_2px_5px_rgba(168,85,247,0.5)]">
-                First letter for my bbg
+                first letter for my BBG
             </h2>
             
             <div class="h-[38vh] overflow-y-auto custom-scroll space-y-3.5 text-purple-200/90 border-t border-b border-purple-950/80 py-3 px-1 leading-relaxed text-xs relative z-10">
                 <p class="italic font-semibold text-purple-300 text-base flex items-center gap-1.5">
-                    My precious Joru, <span>🌷</span>
+                    my precious joru, <span>🌷</span>
                 </p>
                 <p id="textBlock1" class="min-h-[30px]"></p>
                 <p id="textBlock2" class="min-h-[30px]"></p>
@@ -362,12 +360,12 @@
             </div>
             
             <h2 class="fancy-title text-4xl font-semibold text-purple-300 text-center mb-4 tracking-wide drop-shadow-[0_2px_5px_rgba(168,85,247,0.5)]">
-                Another one hehe
+                Letter Two
             </h2>
             
             <div class="h-[38vh] overflow-y-auto custom-scroll space-y-3.5 text-purple-200/90 border-t border-b border-purple-950/80 py-3 px-1 leading-relaxed text-xs relative z-10">
                 <p class="italic font-semibold text-purple-300 text-base flex items-center gap-1.5">
-                    Hey againnn, <span>✨</span>
+                    Hey again, <span>✨</span>
                 </p>
                 <p id="textBlock3" class="min-h-[30px]"></p>
                 <p id="textBlock4" class="min-h-[30px]"></p>
@@ -407,6 +405,7 @@
         const letterContainer = document.getElementById('letterContainer');
         const swipeOverlay = document.getElementById('swipeOverlay');
         const sparkleLayer = document.getElementById('sparkleLayer');
+        const floatingDecorLayer = document.getElementById('floatingDecorLayer');
         
         // Music UI Elements
         const bgMusic = document.getElementById('bgMusic');
@@ -506,6 +505,44 @@
             }
         }
         createAmbientSparkles();
+
+        // RICH AUTOMATED BACKGROUND GENERATOR ENGINE
+        // Safely spawns elements across a vertical grid to avoid grouping or hiding behind UI boxes
+        function generateRichBackground() {
+            floatingDecorLayer.innerHTML = '';
+            const items = ['🌷', '🐱🎀', '💖', '🌸', '🌷', '🐱🎀', '🌸', '💖'];
+            const targetCount = 15; // Increased density significantly
+
+            for(let i = 0; i < targetCount; i++) {
+                const elem = document.createElement('div');
+                elem.classList.add('floating-item');
+                elem.textContent = items[i % items.length];
+                
+                // Adaptive placement math to keep elements scattered from top to bottom safely
+                const topPercent = 20 + (i * 5.5); // Spans evenly down from 20% to ~95% viewport height
+                const leftPercent = (i % 2 === 0) ? (Math.random() * 15) : (80 + Math.random() * 10); // Perfectly clips onto edges
+                
+                // Randomized inline styling configuration
+                const randomSize = Math.random() * 8 + 20; // 20px to 28px perfectly sized for mobile screens
+                const floatY = (Math.random() * 12 + 10) * (Math.random() > 0.5 ? 1 : -1);
+                const floatX = (Math.random() * 8 + 6) * (Math.random() > 0.5 ? 1 : -1);
+                const rotateDeg = Math.random() * 15 + 5;
+                const duration = Math.random() * 3 + 4; // 4s to 7s speeds
+                const delay = Math.random() * 3;
+
+                elem.style.top = `${topPercent}%`;
+                elem.style.left = `${leftPercent}%`;
+                elem.style.fontSize = `${randomSize}px`;
+                elem.style.setProperty('--my', `${floatY}px`);
+                elem.style.setProperty('--mx', `${floatX}px`);
+                elem.style.setProperty('--mr', `${rotateDeg}deg`);
+                elem.style.setProperty('--fdur', `${duration}s`);
+                elem.style.animationDelay = `${delay}s`;
+                
+                floatingDecorLayer.appendChild(elem);
+            }
+        }
+        generateRichBackground();
 
         // Interior Petal Drift Generation Engine
         function injectPetals() {

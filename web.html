@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Romantic Bollywood Melody Letter</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sacramento&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --fancy-font: 'Sacramento', cursive;
+            --body-font: 'Quicksand', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ffe6eb 0%, #f3e8ff 100%);
+            font-family: var(--body-font);
+            overflow: hidden;
+        }
+
+        .fancy-title {
+            font-family: var(--fancy-font);
+        }
+
+        /* Ambient Twinkling Stars */
+        .sparkle {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: twinkle 3s infinite ease-in-out;
+            opacity: 0.3;
+        }
+        @keyframes twinkle {
+            0%, 100% { transform: scale(0.3); opacity: 0.2; }
+            50% { transform: scale(1.2); opacity: 0.8; filter: drop-shadow(0 0 8px #fff); }
+        }
+
+        /* Background Floating Items styling */
+        .floating-item {
+            position: absolute;
+            user-select: none;
+            cursor: pointer;
+            animation: floatSkew 5s ease-in-out infinite alternate;
+            transition: transform 0.2s ease;
+        }
+        .floating-item:hover {
+            transform: scale(1.3) !important;
+        }
+        @keyframes floatSkew {
+            0% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+            100% { transform: translateY(-25px) translateX(10px) rotate(12deg); }
+        }
+
+        /* Pulsing Heart Button */
+        .heart-btn {
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: heartBeat 2s infinite;
+        }
+        .heart-btn:hover {
+            transform: scale(1.2) rotate(5deg);
+            filter: drop-shadow(0 0 25px #ff69b4);
+        }
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+        .heart-disappear {
+            transform: scale(0) rotate(-45deg);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* RESPONSIVE 3D ENVELOPE STRUCTURAL LAYOUT */
+        .envelope-wrapper {
+            position: relative;
+            height: 280px;
+            background-color: #1a1528;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 25px rgba(168, 85, 247, 0.3);
+            border: 2px solid rgba(168, 85, 247, 0.4);
+            transform: scale(0);
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @media (min-width: 640px) {
+            .envelope-wrapper { height: 300px; }
+        }
+        .envelope-wrapper.reveal {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        /* Envelope triangular flap */
+        .envelope-flap {
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            width: calc(100% + 4px);
+            height: 100%;
+            background-color: #241d38;
+            clip-path: polygon(0% 0%, 50% 55%, 100% 0%);
+            border-radius: 15px 15px 0 0;
+            transform-origin: top;
+            transition: transform 0.6s ease-in-out;
+            z-index: 30;
+            border-top: 2px solid rgba(192, 132, 252, 0.5);
+        }
+        .envelope-wrapper.open .envelope-flap {
+            transform: rotateX(180deg) translateY(2px);
+            z-index: 5;
+        }
+
+        /* Wax Seal Button */
+        .wax-seal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -40%) scale(1);
+            z-index: 35;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .wax-seal:hover {
+            transform: translate(-50%, -40%) scale(1.15);
+            filter: drop-shadow(0 0 15px #c084fc);
+        }
+        .envelope-wrapper.open .wax-seal {
+            transform: translate(-50%, -40%) scale(0);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* ADVANCED LETTER MASTER BOX */
+        .letter-box {
+            background-color: #000000;
+            border: 2px solid rgba(192, 132, 252, 0.8);
+            box-shadow: 0 0 40px rgba(168, 85, 247, 0.5), 
+                        inset 0 0 25px rgba(168, 85, 247, 0.25);
+            backdrop-filter: blur(5px);
+            transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.8s ease, top 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            animation: boxGlow 4s ease-in-out infinite alternate;
+        }
+        @keyframes boxGlow {
+            0% { box-shadow: 0 0 30px rgba(168, 85, 247, 0.4); }
+            100% { box-shadow: 0 0 50px rgba(232, 121, 249, 0.7); }
+        }
+
+        /* Hidden inside envelope properties */
+        #letterContainer.in-envelope {
+            position: absolute;
+            top: 10px;
+            left: 5%;
+            width: 90%;
+            height: 90%;
+            z-index: 10;
+            transform: scale(0.95);
+            pointer-events: none;
+            opacity: 0;
+        }
+        /* Slid out state */
+        #letterContainer.slid-out {
+            position: relative;
+            width: 100%;
+            height: auto;
+            z-index: 40;
+            transform: scale(1);
+            pointer-events: auto;
+            opacity: 1;
+        }
+
+        /* Floating Petals Container */
+        .petal-container {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            border-radius: 24px;
+        }
+        .internal-petal {
+            position: absolute;
+            background: radial-gradient(circle, rgba(232,121,249,0.4) 0%, rgba(168,85,247,0.1) 70%);
+            border-radius: 50% 0 50% 50%;
+            animation: fallPetal 6s linear infinite;
+        }
+        @keyframes fallPetal {
+            0% { transform: translateY(-20px) translateX(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.4; }
+            100% { transform: translateY(450px) translateX(80px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Custom Scrollbar for letter content */
+        .custom-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(168, 85, 247, 0.05);
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(168, 85, 247, 0.4);
+            border-radius: 10px;
+        }
+
+        /* Fluid Page Swipe Transition */
+        .page-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #d8b4fe, #f472b6);
+            transform: translateY(100%);
+            transition: transform 0.7s cubic-bezier(0.76, 0, 0.24, 1);
+            z-index: 90;
+            pointer-events: none;
+        }
+        .page-transition.active {
+            transform: translateY(0);
+        }
+
+        /* Active Flying Transition Flight Sparkles */
+        .burst-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 95;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 0 10px #fff, 0 0 20px #f472b6, 0 0 30px #c084fc;
+            animation: flySparkle 0.8s forwards cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        @keyframes flySparkle {
+            0% { transform: translate(0, 0) scale(1.5); opacity: 1; }
+            100% { transform: translate(var(--mx), var(--my)) scale(0); opacity: 0; }
+        }
+
+        /* DYNAMIC RESPONSIVE PLAYLIST BAR */
+        .music-player-top {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            background: rgba(10, 5, 20, 0.96);
+            border: 2px solid #c084fc;
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.6);
+            width: 92%;
+            max-width: 780px;
+        }
+        @media (min-width: 768px) {
+            .music-player-top { top: 15px; width: 95%; }
+        }
+
+        .mini-vinyl {
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, #f472b6 20%, #222 25%, #000 70%);
+            border-radius: 50%;
+            animation: spin 3s linear infinite;
+            animation-play-state: paused;
+            flex-shrink: 0;
+        }
+        @media (min-width: 768px) {
+            .mini-vinyl { width: 44px; height: 44px; }
+        }
+        .mini-vinyl.playing {
+            animation-play-state: running;
+        }
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+        
+        .track-link-item {
+            transition: all 0.3s ease;
+        }
+        .track-link-item.active-track {
+            color: #f472b6;
+            text-shadow: 0 0 10px rgba(244, 114, 182, 0.8);
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center relative select-none p-4 sm:p-6 md:p-8 pt-32 md:pt-28">
+
+    <audio id="bgMusic" preload="auto"></audio>
+
+    <div id="musicControlBar" class="music-player-top flex flex-col md:flex-row items-center gap-3 md:gap-4 px-4 py-3 rounded-2xl transition-all duration-300">
+        <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start border-b border-purple-900/60 md:border-b-0 pb-2 md:pb-0">
+            <div id="vinylIcon" class="mini-vinyl relative flex items-center justify-center cursor-pointer">
+                <div class="w-2 h-2 bg-white rounded-full shadow"></div>
+            </div>
+            <div class="flex items-center gap-1.5">
+                <button id="prevBtn" class="bg-purple-950/80 hover:bg-purple-900 border border-purple-800/40 text-purple-200 text-xs sm:text-sm p-2 rounded-full cursor-pointer transition">⏮</button>
+                <button id="musicToggleBtn" class="bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-bold text-[10px] sm:text-xs px-3.5 py-2 rounded-full shadow transition-colors cursor-pointer tracking-wider">PLAY</button>
+                <button id="nextBtn" class="bg-purple-950/80 hover:bg-purple-900 border border-purple-800/40 text-purple-200 text-xs sm:text-sm p-2 rounded-full cursor-pointer transition">⏭</button>
+            </div>
+        </div>
+        
+        <div class="w-full flex-grow">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-row md:items-center justify-items-center md:justify-start gap-x-3 gap-y-1.5 md:gap-5 text-[11px] md:text-xs text-purple-300 font-medium text-center md:text-left">
+                <span data-index="0" class="track-link-item cursor-pointer hover:text-purple-100 px-1 py-0.5 w-full md:w-auto overflow-hidden text-ellipsis whitespace-nowrap">Samjhawan</span>
+                <span data-index="1" class="track-link-item cursor-pointer hover:text-purple-100 px-1 py-0.5 w-full md:w-auto overflow-hidden text-ellipsis whitespace-nowrap">Likhe Jo Khat</span>
+                <span data-index="2" class="track-link-item cursor-pointer hover:text-purple-100 px-1 py-0.5 w-full md:w-auto overflow-hidden text-ellipsis whitespace-nowrap">Pal Pal Dil Ke</span>
+                <span data-index="3" class="track-link-item cursor-pointer hover:text-purple-100 px-1 py-0.5 w-full md:w-auto overflow-hidden text-ellipsis whitespace-nowrap">Abhi Mujh Mein</span>
+                <span data-index="4" class="track-link-item cursor-pointer hover:text-purple-100 px-1 py-0.5 w-full md:w-auto overflow-hidden text-ellipsis whitespace-nowrap">Mast Magan</span>
+                <span data-index="5" class="track-link-item cursor-pointer hover:text-purple-100 px-1 py-0.5 w-full md:w-auto overflow-hidden text-ellipsis whitespace-nowrap">Rang Jo Lagyo</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="swipeOverlay" class="page-transition"></div>
+
+    <div id="sparkleLayer" class="absolute inset-0 overflow-hidden pointer-events-none"></div>
+
+    <div id="floatingDecorLayer" class="absolute inset-0 overflow-hidden pointer-events-none hidden sm:block">
+        <div class="floating-item text-4xl md:text-5xl top-8 left-8" style="animation-delay: 0s;">🐱🎀</div>
+        <div class="floating-item text-2xl md:text-3xl top-24 left-24" style="animation-delay: 1.2s; opacity: 0.8;">🌷</div>
+        <div class="floating-item text-3xl md:text-4xl top-44 left-10" style="animation-delay: 0.5s;">💖</div>
+        
+        <div class="floating-item text-4xl md:text-5xl top-12 right-12" style="animation-delay: 0.3s;">🌷</div>
+        <div class="floating-item text-3xl md:text-4xl top-28 right-28" style="animation-delay: 1.8s;">🎀</div>
+        <div class="floating-item text-4xl md:text-5xl top-48 right-8" style="animation-delay: 0.9s;">🐱</div>
+
+        <div class="floating-item text-3xl md:text-4xl top-2/3 left-6" style="animation-delay: 2.2s;">🌸</div>
+        <div class="floating-item text-3xl md:text-4xl top-2/3 right-6" style="animation-delay: 1.5s;">🌷</div>
+
+        <div class="floating-item text-4xl md:text-5xl bottom-12 left-12" style="animation-delay: 0.7s;">🌷</div>
+        <div class="floating-item text-3xl md:text-4xl bottom-28 left-28" style="animation-delay: 2s;">🐱🎀</div>
+    </div>
+
+    <div id="page1" class="flex flex-col items-center justify-center z-10 w-full max-w-[440px] relative mx-auto">
+        
+        <button id="heartBtn" class="heart-btn text-7xl md:text-9xl cursor-pointer filter drop-shadow-[0_4px_10px_rgba(255,105,180,0.5)] focus:outline-none">
+            💝
+        </button>
+
+        <div id="envelope" class="envelope-wrapper w-full hidden">
+            <div class="envelope-flap"></div>
+            <div id="waxSeal" class="wax-seal text-4xl md:text-5xl filter drop-shadow-md">🔮</div>
+        </div>
+
+        <div id="letterContainer" class="letter-box in-envelope hidden text-purple-100 rounded-3xl p-6 md:p-12 w-full relative overflow-hidden">
+            
+            <div class="petal-container"></div>
+
+            <div class="absolute top-4 right-4 md:top-6 md:right-6 border-2 border-dashed border-purple-500/40 p-1.5 md:p-2 rounded rotate-6 text-center bg-purple-950/20">
+                <span class="text-[10px] font-mono uppercase tracking-widest text-purple-400 block">Special Mail</span>
+                <span class="text-base md:text-xl">🎀💝</span>
+            </div>
+
+            <div class="absolute top-4 left-4 text-xl opacity-20">🌷</div>
+            <div class="absolute bottom-4 right-4 text-xl opacity-20">🐱</div>
+            
+            <h2 class="fancy-title text-4xl md:text-5xl font-semibold text-purple-300 text-center mb-6 md:mb-8 tracking-wide drop-shadow-[0_2px_5px_rgba(168,85,247,0.5)]">
+                First letter for my BBG
+            </h2>
+            
+            <div class="h-[48vh] overflow-y-auto custom-scroll space-y-4 md:space-y-6 text-purple-200/90 border-t-2 border-b-2 border-purple-950/80 py-4 md:py-6 px-2 md:px-4 leading-relaxed text-sm md:text-md relative z-10">
+                <p class="italic font-semibold text-purple-300 text-lg md:text-2xl flex items-center gap-2">
+                    My precious Joru, <span>🌷</span>
+                </p>
+                <p id="textBlock1" class="min-h-[40px]"></p>
+                <p id="textBlock2" class="min-h-[40px]"></p>
+            </div>
+
+            <div class="mt-6 md:mt-8 flex justify-end relative z-10">
+                <button onclick="navigateToPage('page1', 'page2')" class="bg-gradient-to-r from-purple-600 to-fuchsia-500 hover:from-purple-500 hover:to-fuchsia-400 text-white font-semibold py-2.5 px-6 md:py-3 md:px-8 rounded-full transition-all duration-300 flex items-center gap-2 md:gap-3 text-xs md:text-base shadow-[0_0_15px_rgba(168,85,247,0.4)] hover:shadow-[0_0_25px_rgba(232,121,249,0.7)] cursor-pointer tracking-wider">
+                    Next Letter <span>👉</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="page2" class="hidden flex flex-col items-center justify-center z-10 w-full max-w-[440px] mx-auto">
+        
+        <div class="letter-box text-purple-100 rounded-3xl p-6 md:p-12 w-full relative overflow-hidden">
+            
+            <div class="petal-container"></div>
+
+            <div class="absolute top-4 right-4 md:top-6 md:right-6 border-2 border-dashed border-purple-500/40 p-1.5 md:p-2 rounded -rotate-6 text-center bg-purple-950/20">
+                <span class="text-[10px] font-mono uppercase tracking-widest text-purple-400 block">Air Mail</span>
+                <span class="text-base md:text-xl">🐱🌷</span>
+            </div>
+
+            <div class="absolute top-4 left-4 text-xl opacity-20">🐱🎀</div>
+            <div class="absolute bottom-4 left-4 text-xl opacity-20">🌷</div>
+            
+            <h2 class="fancy-title text-5xl md:text-7xl font-semibold text-purple-300 text-center mb-6 md:mb-8 tracking-wide drop-shadow-[0_2px_5px_rgba(168,85,247,0.5)]">
+                Another one hehe
+            </h2>
+            
+            <div class="h-[48vh] overflow-y-auto custom-scroll space-y-4 md:space-y-6 text-purple-200/90 border-t-2 border-b-2 border-purple-950/80 py-4 md:py-6 px-2 md:px-4 leading-relaxed text-sm md:text-md relative z-10">
+                <p class="italic font-semibold text-purple-300 text-lg md:text-2xl flex items-center gap-2">
+                    Hey againnnn, <span>✨</span>
+                </p>
+                <p id="textBlock3" class="min-h-[40px]"></p>
+                <p id="textBlock4" class="min-h-[40px]"></p>
+            </div>
+
+            <div class="mt-6 md:mt-8 flex justify-between items-center relative z-10">
+                <button onclick="navigateToPage('page2', 'page1')" class="border-2 border-purple-500/40 hover:border-purple-400/80 hover:bg-purple-950/40 text-purple-300 font-semibold py-2 px-4 md:py-2.5 md:px-6 rounded-full transition-all flex items-center gap-1.5 text-xs md:text-base cursor-pointer">
+                    <span>👈</span> Back
+                </button>
+                <span class="text-[10px] md:text-sm text-purple-400/60 font-mono tracking-widest uppercase">End of Chapter ✨</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const textContent = {
+            block1: "Hey there babu tum so rhe ho so just wanted to surprise you hehe. Just wanted to say I'm sorry I ruined your birthday. It is all my fault I could do sm more and do sm more but I didn't even properly check your story or make a good one. I want you to know that i do love you a lot and our conversation in the morning really opened my eyes ke mei kitna change hogya hu. I'm sorry I changed I didn't want to and seeing how it's effecting you is heartbreaking. Ik tu shayad forgive bhi kr hi de but u won't forget and it is pretty evident.",
+            block2: "Everytime we have a conversation like this it just feels we're getting distanced. I don't want us to be distanced I'm sorry Ik sorry won't cut out a lot and I understand that is why I'm taking a big step towards change maybe you don't believe me and it is fine bcs u have given more than enough chances upar se itna thak haar ke bhi tum ache se ho. I have not done sm , I have also messed up sm try try bolke gand hi maar di h. Your crashout was also very hard to see seeing you this way about your birthday really hurted me. It just was sad to see how you were so excited but I couldn't deliver. I love you and ik that you said I do love you but I'm not making you feel loved. I'm sorry I really am I wish I could show how I'm sobbing rn but also it won't make much of a difference ji. This is not too much. But there's more dw ji. If you wanna find out click the button my .",
+            block3: "So here's another hahaha if u didn't notice you can actually change the songs and keep in mind there's something related to it so thoda anticipation rakho for the future. I want you to know that college is starting soon. Hopefully we make new memories as we've been together since start of the college and now it's our last year and we make the most out of it. I have changed but not in a good day and I'm changing that. I wanna change in a good way this is the first step towards it ji.",
+            block4: "I wish you could know how much I love you but I haven't expressed it cz u don't feel it. Ek sher apke liye ji \"apke pyar mei hogye hum pagal, apke pyar mei hogye hum pagal, ankhein jaise badal, tumhare aadayei itni khatarnak, kr diya hume ghayal\"  IK IT'S SHIT I'M SORRY I'M BAD BUT I JUST LOVE YOU I TRIED I HATE IT BUT TERE LIYE BOLNE KA MANN KRTA. So take care my love I am gonna show you more ji heeuueue."
+        };
+
+        const bollywoodPlaylist = [
+            { src: "Samjhawan Humpty Sharma Ki Dulhania 320 Kbps.mp3" },
+            { src: "Likhe Jo Khat Tujhe Kanyadaan 320 Kbps.mp3" }, 
+            { src: "Pal Pal Dil Ke Paas_320(KoshalWorld.Com).mp3" },
+            { src: "Abhi Mujh Mein Kahin Agneepath 320 Kbps.mp3" },
+            { src: "Mast Magan 2 States 320 Kbps.mp3" },
+            { src: "Rang Jo Lagyo Ramaiya Vastavaiya 320 Kbps.mp3" }
+        ];
+
+        let currentTrackIndex = 0;
+
+        const heartBtn = document.getElementById('heartBtn');
+        const envelope = document.getElementById('envelope');
+        const waxSeal = document.getElementById('waxSeal');
+        const letterContainer = document.getElementById('letterContainer');
+        const swipeOverlay = document.getElementById('swipeOverlay');
+        const sparkleLayer = document.getElementById('sparkleLayer');
+        
+        // Music UI Elements
+        const bgMusic = document.getElementById('bgMusic');
+        const vinylIcon = document.getElementById('vinylIcon');
+        const musicToggleBtn = document.getElementById('musicToggleBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const trackLinks = document.querySelectorAll('.track-link-item');
+
+        let typewriterTimers = [];
+
+        // Load Initial Target Track
+        function loadTrack(index) {
+            currentTrackIndex = index;
+            bgMusic.src = bollywoodPlaylist[index].src;
+            
+            // Highlight current text link in the bar menu
+            trackLinks.forEach((link, idx) => {
+                if(idx === index) {
+                    link.classList.add('active-track');
+                } else {
+                    link.classList.remove('active-track');
+                }
+            });
+        }
+
+        function playTrack() {
+            bgMusic.play().catch(e => {
+                console.log("Audio playback held or file link missing.");
+                musicToggleBtn.textContent = "PLAY";
+                vinylIcon.classList.remove('playing');
+            });
+            vinylIcon.classList.add('playing');
+            musicToggleBtn.textContent = "PAUSE";
+        }
+
+        function pauseTrack() {
+            bgMusic.pause();
+            vinylIcon.classList.remove('playing');
+            musicToggleBtn.textContent = "PLAY";
+        }
+
+        musicToggleBtn.addEventListener('click', () => {
+            if (bgMusic.paused) {
+                if(!bgMusic.src) loadTrack(0);
+                playTrack();
+            } else {
+                pauseTrack();
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            let prevIndex = currentTrackIndex - 1;
+            if (prevIndex < 0) prevIndex = bollywoodPlaylist.length - 1;
+            loadTrack(prevIndex);
+            playTrack();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            let nextIndex = currentTrackIndex + 1;
+            if (nextIndex >= bollywoodPlaylist.length) nextIndex = 0;
+            loadTrack(nextIndex);
+            playTrack();
+        });
+
+        // Click directly on song names inside the bar to switch tracks
+        trackLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                const targetIndex = parseInt(e.target.getAttribute('data-index'));
+                loadTrack(targetIndex);
+                playTrack();
+            });
+        });
+
+        // Track rotation loop hook
+        bgMusic.addEventListener('ended', () => {
+            let nextIndex = currentTrackIndex + 1;
+            if (nextIndex >= bollywoodPlaylist.length) nextIndex = 0;
+            loadTrack(nextIndex);
+            playTrack();
+        });
+
+        // Ambient Sparkles Underlay
+        function createAmbientSparkles() {
+            const count = window.innerWidth < 640 ? 20 : 40; 
+            for (let i = 0; i < count; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.classList.add('sparkle');
+                const size = Math.random() * 4 + 2;
+                sparkle.style.width = `${size}px`;
+                sparkle.style.height = `${size}px`;
+                sparkle.style.top = `${Math.random() * 100}%`;
+                sparkle.style.left = `${Math.random() * 100}%`;
+                sparkle.style.animationDelay = `${Math.random() * 3}s`;
+                sparkle.style.animationDuration = `${Math.random() * 3 + 2}s`;
+                sparkleLayer.appendChild(sparkle);
+            }
+        }
+        createAmbientSparkles();
+
+        // Interior Petal Drift Generation Engine
+        function injectPetals() {
+            document.querySelectorAll('.petal-container').forEach(container => {
+                container.innerHTML = ''; 
+                const count = window.innerWidth < 640 ? 5 : 8;
+                for(let i=0; i < count; i++) {
+                    const petal = document.createElement('div');
+                    petal.classList.add('internal-petal');
+                    const size = Math.random() * 10 + 5;
+                    petal.style.width = `${size}px`;
+                    petal.style.height = `${size}px`;
+                    petal.style.left = `${Math.random() * 90}%`;
+                    petal.style.animationDelay = `${Math.random() * 5}s`;
+                    petal.style.animationDuration = `${Math.random() * 4 + 4}s`;
+                    container.appendChild(petal);
+                }
+            });
+        }
+
+        // Heart click displays envelope AND triggers 'Likhe Jo Khat Tujhe'
+        heartBtn.addEventListener('click', () => {
+            heartBtn.classList.add('heart-disappear');
+            
+            loadTrack(1); 
+            playTrack();
+
+            setTimeout(() => {
+                heartBtn.classList.add('hidden');
+                envelope.classList.remove('hidden');
+                void envelope.offsetWidth;
+                envelope.classList.add('reveal');
+            }, 600);
+        });
+
+        // Wax seal opens letter
+        waxSeal.addEventListener('click', () => {
+            envelope.classList.add('open');
+
+            setTimeout(() => {
+                letterContainer.classList.remove('hidden');
+                void letterContainer.offsetWidth;
+                
+                envelope.classList.add('hidden');
+                letterContainer.classList.remove('in-envelope');
+                letterContainer.classList.add('slid-out');
+                
+                injectPetals();
+                runTypewriterSystem(1);
+            }, 800);
+        });
+
+        // Typewriter Assembly Printer Engine
+        function runTypewriterSystem(pageNumber) {
+            typewriterTimers.forEach(clearTimeout);
+            typewriterTimers = [];
+
+            const runPrinter = (elementId, fullText, startDelay, callback) => {
+                const element = document.getElementById(elementId);
+                if(!element) return;
+                element.innerHTML = '';
+                let index = 0;
+
+                const timerId = setTimeout(() => {
+                    function drawChar() {
+                        if (index < fullText.length) {
+                            element.innerHTML += fullText.charAt(index);
+                            index++;
+                            const nextTimer = setTimeout(drawChar, 18); 
+                            typewriterTimers.push(nextTimer);
+                        } else if(callback) {
+                            callback();
+                        }
+                    }
+                    drawChar();
+                }, startDelay);
+                typewriterTimers.push(timerId);
+            };
+
+            if(pageNumber === 1) {
+                runPrinter('textBlock1', textContent.block1, 200, () => {
+                    runPrinter('textBlock2', textContent.block2, 100);
+                });
+            } else if(pageNumber === 2) {
+                runPrinter('textBlock3', textContent.block3, 200, () => {
+                    runPrinter('textBlock4', textContent.block4, 100);
+                });
+            }
+        }
+
+        // Interactive Clicking Explosion Burst
+        document.body.addEventListener('click', (e) => {
+            if (!e.target.classList.contains('floating-item')) return;
+            
+            const count = 8;
+            for (let i = 0; i < count; i++) {
+                const burst = document.createElement('div');
+                burst.classList.add('burst-particle');
+                burst.style.left = `${e.clientX}px`;
+                burst.style.top = `${e.clientY}px`;
+                burst.style.width = '5px';
+                burst.style.height = '5px';
+
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 60 + 20;
+                const mx = Math.cos(angle) * distance;
+                const my = Math.sin(angle) * distance;
+
+                burst.style.setProperty('--mx', `${mx}px`);
+                burst.style.setProperty('--my', `${my}px`);
+                document.body.appendChild(burst);
+                setTimeout(() => burst.remove(), 800);
+            }
+        });
+
+        // Magical Flight Transition Trail Sparks Array
+        function triggerTransitionSparkles() {
+            const particleCount = window.innerWidth < 640 ? 25 : 45; 
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+
+            for (let i = 0; i < particleCount; i++) {
+                setTimeout(() => {
+                    const p = document.createElement('div');
+                    p.classList.add('burst-particle');
+                    p.style.left = `${Math.random() * screenWidth}px`;
+                    p.style.top = `${screenHeight + 50}px`;
+
+                    const size = Math.random() * 6 + 3;
+                    p.style.width = `${size}px`;
+                    p.style.height = `${size}px`;
+
+                    p.style.setProperty('--mx', `${(Math.random() - 0.5) * 200}px`);
+                    p.style.setProperty('--my', `${-(Math.random() * screenHeight + 150)}px`);
+
+                    document.body.appendChild(p);
+                    setTimeout(() => p.remove(), 800);
+                }, i * 10);
+            }
+        }
+
+        // Smooth Page Swapping Execution Logic
+        function navigateToPage(currentPageId, nextPageId) {
+            const current = document.getElementById(currentPageId);
+            const next = document.getElementById(nextPageId);
+
+            triggerTransitionSparkles();
+            swipeOverlay.classList.add('active');
+
+            setTimeout(() => {
+                current.classList.add('hidden');
+                next.classList.remove('hidden');
+                
+                injectPetals();
+
+                if(nextPageId === 'page1') {
+                    letterContainer.classList.remove('hidden', 'in-envelope');
+                    letterContainer.classList.add('slid-out');
+                    heartBtn.classList.add('hidden');
+                    envelope.classList.add('hidden');
+                    runTypewriterSystem(1);
+                } else {
+                    runTypewriterSystem(2);
+                }
+                
+                swipeOverlay.classList.remove('active');
+            }, 650);
+        }
+
+        // Mouse Pointer Parallax Tilt Engine
+        if (window.matchMedia("(min-width: 1024px)").matches) {
+            document.addEventListener('mousemove', (e) => {
+                const boxes = document.querySelectorAll('.letter-box:not(.hidden)');
+                if(boxes.length === 0) return;
+                
+                const xAxis = (window.innerWidth / 2 - e.pageX) / 75;
+                const yAxis = (window.innerHeight / 2 - e.pageY) / 75;
+                
+                boxes.forEach(box => {
+                    box.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+                });
+            });
+        }
+    </script>
+</body>
+</html>
